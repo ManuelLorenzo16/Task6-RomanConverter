@@ -4,12 +4,14 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PR2L8ZQPSC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
+      function gtag() {
+        dataLayer.push(arguments);
+      }
       gtag('js', new Date());
 
       gtag('config', 'G-PR2L8ZQPSC');
     </script>
-    <script src="romans.js"></script>
+    <script src="romans.js"></script> <!-- Ensure this is loaded before the inline script -->
     <link rel="stylesheet" href="romans.css">
   </head>
   <body onload="init()">
@@ -17,37 +19,66 @@
       <section class="content">
         <h1>Roman To Integer</h1>
         <div class="group">
-          <input type="checkbox" id="mode-selector" name="mode-selector" onchange="trackModeChange(this.checked)" />
+          <input type="checkbox" id="mode-selector" name="mode-selector" />
           <label for="mode-selector">Change Mode</label>
         </div>
         <div class="group">
           <input type="text" id="conversion-input" name="conversion-input" />
         </div>
-        <span class="convert-button" onclick="convertNumber()">Convert</span>
+        <span class="convert-button">Convert</span>
         <p class="convert-output"></p>
       </section>
     </main>
 
     <script>
-      function trackModeChange(isChecked) {
-        const mode = isChecked ? 'Roman to Integer' : 'Integer to Roman';
-        gtag('event', 'mode_change', {
-          'event_category': 'User Interaction',
-          'event_label': 'Mode Change',
-          'value': mode
+      let currentMode = 'Roman to Integer'; // Default mode
+
+      function init() {
+        document.getElementById('mode-selector').checked = false; // Initialize checkbox
+
+        document.getElementById('mode-selector').addEventListener('change', function(e) {
+          currentMode = e.target.checked ? 'Integer to Roman' : 'Roman to Integer';
+          document.querySelector('h1').innerHTML = currentMode;
+          gtag('event', 'mode_change', {
+            'event_category': 'User Interaction',
+            'event_label': 'Mode Change',
+            'value': currentMode
+          });
         });
-      }
 
-     function convertNumber() {
-        const inputValue = document.getElementById('conversion-input').value;
-        const outputValue = convert(inputValue, currentMode);
-        document.querySelector('.convert-output').textContent = outputValue;
+        document.querySelector('.convert-button').addEventListener('click', function() {
+          const inputValue = document.getElementById('conversion-input').value;
+          if (!inputValue) {
+            console.log('No input value provided.'); // Debugging line
+            return;
+          }
 
-        console.log(`Converted value: ${outputValue}`); 
-        gtag('event', 'number_conversion', {
-          'event_category': 'User Interaction',
-          'event_label': 'Number Conversion',
-          'value': inputValue
+          let outputValue;
+          if (currentMode === 'Roman to Integer') {
+            const result = convertRomanToInteger(inputValue);
+            if (result.result) {
+              outputValue = result.value;
+            } else {
+              alert(result.message);
+              return;
+            }
+          } else {
+            const result = convertIntegerToRoman(inputValue);
+            if (result.result) {
+              outputValue = result.value;
+            } else {
+              alert(result.message);
+              return;
+            }
+          }
+
+          document.querySelector('.convert-output').textContent = outputValue;
+          console.log(`Converted value: ${outputValue}`); // Debugging line
+          gtag('event', 'number_conversion', {
+            'event_category': 'User Interaction',
+            'event_label': 'Number Conversion',
+            'value': inputValue
+          });
         });
       }
     </script>
