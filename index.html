@@ -38,12 +38,12 @@
         });
       }
 
-      function convertNumber() {
+     function convertNumber() {
         const inputValue = document.getElementById('conversion-input').value;
-        // Assuming convert function exists and processes the input value
-        const outputValue = convert(inputValue);
+        const outputValue = convert(inputValue, currentMode);
         document.querySelector('.convert-output').textContent = outputValue;
 
+        console.log(`Converted value: ${outputValue}`); // Debugging line
         gtag('event', 'number_conversion', {
           'event_category': 'User Interaction',
           'event_label': 'Number Conversion',
